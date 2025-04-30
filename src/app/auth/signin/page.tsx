@@ -1,13 +1,31 @@
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import { authOptions } from "@/lib/auth";
+"use client";
 
-export default async function SignIn() {
-  const session = await getServerSession(authOptions);
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { useEffect } from "react";
 
-  if (session) {
-    redirect("/dashboard");
-  }
+export default function SignIn() {
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (session) {
+      router.push("/dashboard");
+    }
+  }, [session, router]);
+
+  // Debug information (only in development)
+  const isDevelopment = process.env.NODE_ENV === "development";
+  const debugInfo = isDevelopment ? {
+    googleId: process.env.NEXT_PUBLIC_GOOGLE_ID ? "Set" : "Not Set",
+    googleSecret: process.env.NEXT_PUBLIC_GOOGLE_SECRET ? "Set" : "Not Set",
+    githubId: process.env.NEXT_PUBLIC_GITHUB_ID ? "Set" : "Not Set",
+    githubSecret: process.env.NEXT_PUBLIC_GITHUB_SECRET ? "Set" : "Not Set",
+    nextAuthUrl: process.env.NEXT_PUBLIC_NEXTAUTH_URL,
+    nextAuthSecret: process.env.NEXT_PUBLIC_NEXTAUTH_SECRET ? "Set" : "Not Set",
+    nodeEnv: process.env.NODE_ENV,
+  } : null;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -17,10 +35,24 @@ export default async function SignIn() {
             Sign in to your account
           </h2>
         </div>
+        {isDevelopment && debugInfo && (
+          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md text-sm">
+            <p className="font-semibold">Debug Info:</p>
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+              <li>Google ID: {debugInfo.googleId}</li>
+              <li>Google Secret: {debugInfo.googleSecret}</li>
+              <li>GitHub ID: {debugInfo.githubId}</li>
+              <li>GitHub Secret: {debugInfo.githubSecret}</li>
+              <li>NextAuth URL: {debugInfo.nextAuthUrl}</li>
+              <li>NextAuth Secret: {debugInfo.nextAuthSecret}</li>
+              <li>Node Environment: {debugInfo.nodeEnv}</li>
+            </ul>
+          </div>
+        )}
         <div className="mt-8 space-y-6">
           <div className="space-y-4">
-            <a
-              href="/api/auth/signin/github"
+            <button
+              onClick={() => signIn("github")}
               className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-800 hover:bg-gray-700"
             >
               <svg
@@ -36,9 +68,9 @@ export default async function SignIn() {
                 />
               </svg>
               Sign in with GitHub
-            </a>
-            <a
-              href="/api/auth/signin/google"
+            </button>
+            <button
+              onClick={() => signIn("google")}
               className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700"
             >
               <svg
@@ -50,7 +82,7 @@ export default async function SignIn() {
                 <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z" />
               </svg>
               Sign in with Google
-            </a>
+            </button>
           </div>
         </div>
       </div>

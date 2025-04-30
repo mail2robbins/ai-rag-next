@@ -84,6 +84,8 @@ A Next.js application that allows users to upload PDF documents and chat with th
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## License
 
-MIT
+npx prisma generate
+
+npx prisma db push
+
