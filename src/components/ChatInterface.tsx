@@ -63,7 +63,7 @@ export default function ChatInterface() {
   };
 
   return (
-    <div className="flex flex-col h-[500px]">
+    <div className="flex flex-col h-[calc(100vh-300px)] min-h-[340px]">
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message, index) => (
           <div
