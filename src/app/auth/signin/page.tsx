@@ -15,17 +15,6 @@ export default function SignIn() {
     }
   }, [session, router]);
 
-  // Debug information (only in development)
-  const isDevelopment = process.env.NODE_ENV === "development";
-  const debugInfo = isDevelopment ? {
-    googleId: process.env.NEXT_PUBLIC_GOOGLE_ID ? "Set" : "Not Set",
-    googleSecret: process.env.NEXT_PUBLIC_GOOGLE_SECRET ? "Set" : "Not Set",
-    githubId: process.env.NEXT_PUBLIC_GITHUB_ID ? "Set" : "Not Set",
-    githubSecret: process.env.NEXT_PUBLIC_GITHUB_SECRET ? "Set" : "Not Set",
-    nextAuthUrl: process.env.NEXT_PUBLIC_NEXTAUTH_URL,
-    nextAuthSecret: process.env.NEXT_PUBLIC_NEXTAUTH_SECRET ? "Set" : "Not Set",
-    nodeEnv: process.env.NODE_ENV,
-  } : null;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -35,20 +24,6 @@ export default function SignIn() {
             Sign in to your account
           </h2>
         </div>
-        {isDevelopment && debugInfo && (
-          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md text-sm">
-            <p className="font-semibold">Debug Info:</p>
-            <ul className="list-disc pl-5 mt-2 space-y-1">
-              <li>Google ID: {debugInfo.googleId}</li>
-              <li>Google Secret: {debugInfo.googleSecret}</li>
-              <li>GitHub ID: {debugInfo.githubId}</li>
-              <li>GitHub Secret: {debugInfo.githubSecret}</li>
-              <li>NextAuth URL: {debugInfo.nextAuthUrl}</li>
-              <li>NextAuth Secret: {debugInfo.nextAuthSecret}</li>
-              <li>Node Environment: {debugInfo.nodeEnv}</li>
-            </ul>
-          </div>
-        )}
         <div className="mt-8 space-y-6">
           <div className="space-y-4">
             <button

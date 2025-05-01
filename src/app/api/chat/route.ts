@@ -6,9 +6,6 @@ import { OpenAIEmbeddings } from "@langchain/openai";
 import { ChatOpenAI } from "@langchain/openai";
 import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
 import { createRetrievalChain } from "langchain/chains/retrieval";
-import { createHistoryAwareRetriever } from "langchain/chains/history_aware_retriever";
-import { MessagesPlaceholder } from "@langchain/core/prompts";
-import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 
 export async function POST(request: Request) {
@@ -83,8 +80,8 @@ export async function POST(request: Request) {
       });
 
       return NextResponse.json({ response: response.answer });
-    } catch (error: any) {
-      if (error.name === 'InsufficientQuotaError' || error.status === 429) {
+    } catch (error: unknown) {
+      if (error instanceof Error && (error.name === 'InsufficientQuotaError' || (error as { status?: number }).status === 429)) {
         return NextResponse.json(
           { 
             error: "OpenAI API quota exceeded. Please check your billing details or try again later.",

@@ -29,29 +29,10 @@ export const authOptions: NextAuthOptions = {
     error: "/auth/error",
   },
   callbacks: {
-    async signIn({ user, account, profile }) {
-      console.log("Sign in attempt:", { 
-        user, 
-        account, 
-        profile,
-        googleId: process.env.GOOGLE_ID,
-        googleSecret: process.env.GOOGLE_SECRET ? "Set" : "Not Set",
-        githubId: process.env.GITHUB_ID,
-        githubSecret: process.env.GITHUB_SECRET ? "Set" : "Not Set",
-        nextAuthUrl: process.env.NEXTAUTH_URL,
-        baseUrl: process.env.NEXTAUTH_URL || "http://localhost:3000"
-      });
+    async signIn() {
       return true;
     },
     async redirect({ url, baseUrl }) {
-      console.log("Redirect callback:", { 
-        url, 
-        baseUrl,
-        nextAuthUrl: process.env.NEXTAUTH_URL,
-        isRelative: url.startsWith("/"),
-        isSameOrigin: new URL(url).origin === baseUrl
-      });
-      
       // If the URL is relative, prepend the base URL
       if (url.startsWith("/")) {
         return `${baseUrl}${url}`;
@@ -63,35 +44,21 @@ export const authOptions: NextAuthOptions = {
       // Otherwise, redirect to the base URL
       return baseUrl;
     },
-    async session({ session, token, user }) {
-      console.log("Session callback:", { 
-        session, 
-        token, 
-        user,
-        hasToken: !!token,
-        hasUser: !!user
-      });
+    async session({ session }) {
       return session;
     },
-    async jwt({ token, account, user, profile }) {
-      console.log("JWT callback:", { 
-        token, 
-        account, 
-        user, 
-        profile,
-        hasAccount: !!account,
-        hasUser: !!user,
-        hasProfile: !!profile
-      });
+    async jwt({ token }) {
       return token;
     }
   },
   events: {
-    async signIn({ user, account, profile }) {
-      console.log("Sign in event:", { user, account, profile });
+    async signIn() {
+      // Log successful sign-in
+      console.log("User signed in successfully");
     },
-    async signOut({ session, token }) {
-      console.log("Sign out event:", { session, token });
+    async signOut() {
+      // Log successful sign-out
+      console.log("User signed out successfully");
     }
   },
   secret: process.env.NEXTAUTH_SECRET,

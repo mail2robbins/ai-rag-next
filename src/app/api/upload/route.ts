@@ -65,7 +65,7 @@ export async function POST(request: Request) {
     });
 
     try {
-      const vectorStore = await QdrantVectorStore.fromDocuments(splitDocs, embeddings, {
+      await QdrantVectorStore.fromDocuments(splitDocs, embeddings, {
         url: process.env.QDRANT_ENDPOINT,
         apiKey: process.env.QDRANT_API_KEY,
         collectionName: session.user.email,
@@ -85,8 +85,8 @@ export async function POST(request: Request) {
       });
 
       return NextResponse.json({ success: true });
-    } catch (error: any) {
-      if (error.name === 'InsufficientQuotaError' || error.status === 429) {
+    } catch (error: unknown) {
+      if (error instanceof Error && (error.name === 'InsufficientQuotaError' || (error as { status?: number }).status === 429)) {
         return NextResponse.json(
           { 
             error: "OpenAI API quota exceeded. Please check your billing details or try again later.",

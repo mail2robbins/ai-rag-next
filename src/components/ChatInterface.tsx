@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 interface Message {
   role: "user" | "assistant";
@@ -11,6 +11,15 @@ export default function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,11 +49,12 @@ export default function ChatInterface() {
         { role: "assistant", content: data.response },
       ]);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content: "Sorry, I encountered an error. Please try again.",
+          content: `Sorry, I encountered an error: ${errorMessage}. Please try again.`,
         },
       ]);
     } finally {
@@ -80,8 +90,9 @@ export default function ChatInterface() {
             </div>
           </div>
         )}
+        <div ref={messagesEndRef} />
       </div>
-      <form onSubmit={handleSubmit} className="p-4 border-t">
+      <form onSubmit={handleSubmit} className="p-4 border-t bg-white">
         <div className="flex space-x-2">
           <input
             type="text"
