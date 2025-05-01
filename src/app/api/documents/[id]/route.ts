@@ -2,10 +2,12 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { QdrantVectorStore } from "@langchain/community/vectorstores/qdrant";
+import { OpenAIEmbeddings } from "@langchain/openai";
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = await params; // Await the params to resolve the Promise
+    const { id } = await params;
     console.log("Attempting to delete document:", id);
     
     const session = await getServerSession(authOptions);
@@ -46,15 +48,47 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     }
 
     console.log("Deleting document:", document.id);
-    // Delete the document
+    
+    // Initialize embeddings and vector store
+    const embeddings = new OpenAIEmbeddings({
+      openAIApiKey: process.env.OPENAI_API_KEY,
+      maxRetries: 3,
+      maxConcurrency: 5,
+    });
+
+    // Delete from Qdrant first
+    try {
+      const vectorStore = await QdrantVectorStore.fromExistingCollection(embeddings, {
+        url: process.env.QDRANT_ENDPOINT,
+        apiKey: process.env.QDRANT_API_KEY,
+        collectionName: session.user.email,
+      });
+
+      // Delete all vectors associated with this document
+      // We'll use the document content as a filter to find the vectors
+      await vectorStore.delete({
+        filter: {
+          must: [
+            {
+              key: "metadata.documentId",
+              match: {
+                value: id
+              }
+            }
+          ]
+        }
+      });
+    } catch (error) {
+      console.error("Error deleting vectors from Qdrant:", error);
+      // Continue with document deletion even if Qdrant deletion fails
+    }
+
+    // Delete the document from database
     await prisma.document.delete({
       where: {
         id: id,
       },
     });
-
-    // Also delete from Qdrant
-    // TODO: Implement Qdrant deletion if needed
 
     console.log("Document deleted successfully");
     return NextResponse.json({ success: true });

@@ -65,13 +65,7 @@ export async function POST(request: Request) {
     });
 
     try {
-      await QdrantVectorStore.fromDocuments(splitDocs, embeddings, {
-        url: process.env.QDRANT_ENDPOINT,
-        apiKey: process.env.QDRANT_API_KEY,
-        collectionName: session.user.email,
-      });
-
-      // Store document metadata in database
+      // First create the document in the database to get its ID
       console.log("Creating document for user:", user.id);
       const document = await prisma.document.create({
         data: {
@@ -85,6 +79,22 @@ export async function POST(request: Request) {
         },
       });
       console.log("Created document:", document);
+
+      // Add document ID to metadata for each chunk
+      const docsWithMetadata = splitDocs.map(doc => ({
+        ...doc,
+        metadata: {
+          ...doc.metadata,
+          documentId: document.id
+        }
+      }));
+
+      // Store vectors in Qdrant with document ID in metadata
+      await QdrantVectorStore.fromDocuments(docsWithMetadata, embeddings, {
+        url: process.env.QDRANT_ENDPOINT,
+        apiKey: process.env.QDRANT_API_KEY,
+        collectionName: session.user.email,
+      });
 
       return NextResponse.json({ success: true });
     } catch (error: unknown) {
