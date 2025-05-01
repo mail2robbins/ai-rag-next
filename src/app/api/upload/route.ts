@@ -72,7 +72,8 @@ export async function POST(request: Request) {
       });
 
       // Store document metadata in database
-      await prisma.document.create({
+      console.log("Creating document for user:", user.id);
+      const document = await prisma.document.create({
         data: {
           name: file.name,
           content: docs
@@ -80,9 +81,10 @@ export async function POST(request: Request) {
             .join("\n")
             .replace(/\0/g, '') // Remove null bytes
             .slice(0, 4000), // Limit content size to prevent database issues
-          userId: user.id, // Use the user's ID instead of email
+          userId: user.id,
         },
       });
+      console.log("Created document:", document);
 
       return NextResponse.json({ success: true });
     } catch (error: unknown) {
