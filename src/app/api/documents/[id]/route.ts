@@ -3,12 +3,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
-export async function DELETE(
-  request: Request,
-  context: { params: { id: string } }
-) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = await Promise.resolve(context.params);
+    const { id } = await params; // Await the params to resolve the Promise
     console.log("Attempting to delete document:", id);
     
     const session = await getServerSession(authOptions);
