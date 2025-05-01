@@ -19,6 +19,18 @@ export async function POST(request: Request) {
       );
     }
 
+    // Get user from database
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404 }
+      );
+    }
+
     const formData = await request.formData();
     const file = formData.get("file") as File;
 
@@ -63,8 +75,12 @@ export async function POST(request: Request) {
       await prisma.document.create({
         data: {
           name: file.name,
-          content: docs.map((doc) => doc.pageContent).join("\n"),
-          userId: session.user.email,
+          content: docs
+            .map((doc) => doc.pageContent)
+            .join("\n")
+            .replace(/\0/g, '') // Remove null bytes
+            .slice(0, 4000), // Limit content size to prevent database issues
+          userId: user.id, // Use the user's ID instead of email
         },
       });
 
