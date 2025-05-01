@@ -12,7 +12,9 @@ interface Document {
 export default function PDFUploader() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -41,6 +43,7 @@ export default function PDFUploader() {
   const onDrop = async (acceptedFiles: File[]) => {
     setUploading(true);
     setError(null);
+    setSuccess(null);
 
     try {
       for (const file of acceptedFiles) {
@@ -61,6 +64,7 @@ export default function PDFUploader() {
           throw new Error(errorData.error || "Failed to upload file");
         }
       }
+      setSuccess(`Successfully uploaded ${acceptedFiles.length} document(s)`);
       // Add a small delay to ensure the document is processed
       setTimeout(fetchDocuments, 1000);
     } catch (err) {
@@ -71,6 +75,7 @@ export default function PDFUploader() {
   };
 
   const handleDelete = async (documentId: string) => {
+    setShowDeleteConfirm(null);
     try {
       const response = await fetch(`/api/documents/${documentId}`, {
         method: "DELETE",
@@ -81,6 +86,7 @@ export default function PDFUploader() {
       }
 
       setDocuments(documents.filter(doc => doc.id !== documentId));
+      setSuccess("Document deleted successfully");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete document");
     }
@@ -97,6 +103,17 @@ export default function PDFUploader() {
 
   return (
     <div className="space-y-6">
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
+          {error}
+        </div>
+      )}
+      {success && (
+        <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg">
+          {success}
+        </div>
+      )}
+
       <div className="relative">
         <div
           {...getRootProps()}
@@ -129,9 +146,6 @@ export default function PDFUploader() {
                 <p>Drag and drop PDF files here, or click to select files</p>
               )}
             </div>
-            {error && (
-              <div className="text-sm text-red-600">{error}</div>
-            )}
           </div>
         </div>
 
@@ -155,7 +169,7 @@ export default function PDFUploader() {
               <li key={doc.id} className="py-3 flex items-center justify-between">
                 <span className="text-sm text-gray-600">{doc.name}</span>
                 <button
-                  onClick={() => handleDelete(doc.id)}
+                  onClick={() => setShowDeleteConfirm(doc.id)}
                   className="text-red-600 hover:text-red-800 text-sm font-medium"
                 >
                   Delete
@@ -165,6 +179,32 @@ export default function PDFUploader() {
           </ul>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Confirm Delete</h3>
+            <p className="text-sm text-gray-600 mb-6">
+              Are you sure you want to delete this document? This action cannot be undone.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowDeleteConfirm(null)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDelete(showDeleteConfirm)}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
