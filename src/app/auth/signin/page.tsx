@@ -10,7 +10,7 @@ export default function SignIn() {
   // const { theme } = useTheme();
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-100 via-teal-100 to-indigo-100 dark:bg-gradient-to-br dark:from-gray-800 dark:via-gray-700 dark:to-gray-800">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-100 via-teal-100 to-blue-300 dark:bg-gradient-to-br dark:from-gray-800 dark:via-gray-700 dark:to-blue-900">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -20,7 +20,7 @@ export default function SignIn() {
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
           Welcome to RAG-ify
         </h2>
-        <h4 className="text-center text-xl font-extrabold text-gray-900 dark:text-gray-400">
+        <h4 className="text-center text-xl font-extrabold text-gray-400 dark:text-gray-400">
           Your AI PDF Support Agent
         </h4>
         <p className="mt-8 text-center text-sm text-gray-600 dark:text-gray-400">
