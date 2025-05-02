@@ -1,70 +1,53 @@
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import { authOptions } from "@/lib/auth";
+"use client";
+
+import { useSession } from "next-auth/react";
 import PDFUploader from "@/components/PDFUploader";
 import ChatInterface from "@/components/ChatInterface";
-import Navbar from "@/components/Navbar";
+import { motion } from "framer-motion";
 
-export default async function Dashboard() {
-  const session = await getServerSession(authOptions);
-
-  if (!session) {
-    redirect("/auth/signin");
-  }
+export default function Dashboard() {
+  const { data: session } = useSession();
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navbar />
-      <div className="max-w-7xl mx-auto py-2 sm:px-6 lg:px-8">
-        <div className="px-4 py-2 sm:px-0">
-          {/* Welcome Message */}
-          <div className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 shadow-sm border border-blue-100">
-            <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0">
-                <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <svg
-                    className="h-6 w-6 text-blue-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Welcome back, {session.user?.name?.split(' ')[0]}! 👋
-                </h1>
-                <p className="mt-1 text-sm text-gray-500">
-                  Ready to explore your documents? Upload a PDF or start a chat.
-                </p>
-              </div>
-            </div>
-          </div>
+    <div className="space-y-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center"
+      >
+        <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl">
+          Welcome back, {session?.user?.name}
+        </h1>
+        <p className="mt-4 text-xl text-gray-600 dark:text-gray-400">
+          Upload and chat with your PDF documents
+        </p>
+      </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-900">
-                Upload PDF Documents
-              </h2>
-              <PDFUploader />
-            </div>
-            
-            <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-900">
-                Chat with Your Documents
-              </h2>
-              <ChatInterface />
-            </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="grid grid-cols-1 md:grid-cols-2 gap-8"
+      >
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+            Upload Documents
+          </h2>
+          <div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-6">
+            <PDFUploader />
           </div>
         </div>
-      </div>
+
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+            Chat with Documents
+          </h2>
+          <div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-6">
+            <ChatInterface />
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 } 
