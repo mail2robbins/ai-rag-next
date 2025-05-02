@@ -64,7 +64,6 @@ export async function POST(request: Request) {
 
     try {
       // First create the document in the database to get its ID
-      console.log("Creating document for user:", user.id);
       const document = await prisma.document.create({
         data: {
           name: file.name,
@@ -76,7 +75,6 @@ export async function POST(request: Request) {
           userId: user.id,
         },
       });
-      console.log("Created document:", document);
 
       // Add document ID to metadata for each chunk
       const docsWithMetadata = splitDocs.map(doc => ({
@@ -112,7 +110,6 @@ export async function POST(request: Request) {
           })),
           skipDuplicates: true,
         });
-        console.log("Stored point IDs in database:", points.points.length);
       }
 
       return NextResponse.json({ success: true });

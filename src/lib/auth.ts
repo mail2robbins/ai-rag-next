@@ -54,11 +54,9 @@ export const authOptions: NextAuthOptions = {
   events: {
     async signIn() {
       // Log successful sign-in
-      console.log("User signed in successfully");
     },
     async signOut() {
       // Log successful sign-out
-      console.log("User signed out successfully");
     }
   },
   secret: process.env.NEXTAUTH_SECRET,

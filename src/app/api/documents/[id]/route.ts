@@ -7,7 +7,6 @@ import { QdrantClient } from "@qdrant/js-client-rest";
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    console.log("Attempting to delete document:", id);
     
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
@@ -29,7 +28,6 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
       );
     }
 
-    console.log("Checking document for user:", user.id);
     // Find the document and ensure it belongs to the user
     const document = await prisma.document.findFirst({
       where: {
@@ -42,23 +40,19 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     });
 
     if (!document) {
-      console.log("Document not found or doesn't belong to user");
       return NextResponse.json(
         { error: "Document not found" },
         { status: 404 }
       );
     }
 
-    console.log("Deleting document:", document.id);
-    
     // Delete from Qdrant first
     try {
       if (!process.env.QDRANT_ENDPOINT || !process.env.QDRANT_API_KEY) {
         throw new Error("Qdrant configuration is missing");
       }
 
-      console.log("Qdrant endpoint:", process.env.QDRANT_ENDPOINT);
-      
+
       const qdrant = new QdrantClient({
         url: process.env.QDRANT_ENDPOINT,
         apiKey: process.env.QDRANT_API_KEY,
@@ -66,17 +60,14 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
       });
 
       const collectionName = session.user.email;
-      console.log("Deleting vectors from Qdrant collection:", collectionName);
 
       // Delete points one by one using their IDs
       if (document.vectors && document.vectors.length > 0) {
-        console.log(`Found ${document.vectors.length} vectors to delete`);
         for (const vector of document.vectors) {
           try {
             await qdrant.delete(collectionName, {
               points: [vector.pointId]
             });
-            console.log(`Deleted point ${vector.pointId}`);
           } catch (error) {
             console.error(`Error deleting point ${vector.pointId}:`, error);
           }
@@ -102,7 +93,6 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
       },
     });
 
-    console.log("Document deleted successfully");
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error deleting document:", error);

@@ -23,20 +23,17 @@ export default function PDFUploader() {
 
   useEffect(() => {
     if (session?.user?.email) {
-      console.log("Fetching documents for user:", session.user.email);
       fetchDocuments();
     }
   }, [session?.user?.email]);
 
   const fetchDocuments = async () => {
     try {
-      console.log("Making request to /api/documents");
       const response = await fetch("/api/documents");
       if (!response.ok) {
         throw new Error("Failed to fetch documents");
       }
       const data = await response.json();
-      console.log("Received documents:", data);
       setDocuments(data);
     } catch (err) {
       console.error("Error fetching documents:", err);

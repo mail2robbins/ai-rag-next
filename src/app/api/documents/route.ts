@@ -7,15 +7,12 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
-      console.log("No session found");
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
       );
     }
 
-    console.log("Session user email:", session.user.email);
-    
     // First get the user's ID
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
@@ -26,14 +23,11 @@ export async function GET() {
     });
 
     if (!user) {
-      console.log("User not found in database for email:", session.user.email);
       return NextResponse.json(
         { error: "User not found" },
         { status: 404 }
       );
     }
-
-    console.log("Found user:", user);
 
     // Check if any documents exist
     const documentCount = await prisma.document.count({
@@ -42,7 +36,6 @@ export async function GET() {
       },
     });
 
-    console.log("Total documents for user:", documentCount);
 
     const documents = await prisma.document.findMany({
       where: {
@@ -58,7 +51,6 @@ export async function GET() {
       },
     });
 
-    console.log("Found documents:", documents);
     return NextResponse.json(documents);
   } catch (error) {
     console.error("Error fetching documents:", error);
