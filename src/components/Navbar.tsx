@@ -44,7 +44,7 @@ export default function Navbar() {
                                 </svg>
                             </div>
                         )}
-                        {mounted && (
+                        {/* {mounted && (
                             <motion.button
                                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                                 className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
@@ -81,7 +81,7 @@ export default function Navbar() {
                                     </svg>
                                 )}
                             </motion.button>
-                        )}
+                        )} */}
 
                         {session && (
                             <motion.button
