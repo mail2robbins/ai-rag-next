@@ -196,7 +196,7 @@ export default function PDFUploader() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800/50 bg-opacity-50 rounded-xl"
+            className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700 bg-opacity-90 rounded-xl"
           >
             <div className="flex flex-col items-center space-y-2">
               <motion.div
@@ -214,7 +214,7 @@ export default function PDFUploader() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6"
+        className="bg-white dark:bg-gray-700 rounded-xl shadow-sm p-6 bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800"
       >
         <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Uploaded Documents</h3>
         {documents.length === 0 ? (

@@ -34,7 +34,7 @@ export default function Dashboard() {
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
             Upload Documents
           </h2>
-          <div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-6">
+          <div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-6 bg-gradient-to-b from-gray-800 via-gray-700 to-gray-800">
             <PDFUploader />
           </div>
         </div>
