@@ -42,6 +42,9 @@ export default function PDFUploader() {
   };
 
   const onDrop = async (acceptedFiles: File[]) => {
+    // Only proceed if there are accepted files
+    if (acceptedFiles.length === 0) return;
+
     setUploading(true);
     setError(null);
     setSuccess(null);
@@ -103,6 +106,17 @@ export default function PDFUploader() {
     },
     multiple: true,
     disabled: uploading,
+    maxSize: 1024 * 1024, // 1MB in bytes
+    onDropRejected: (fileRejections) => {
+      setSuccess(null); // Clear any existing success message
+      const errors = fileRejections.map(rejection => {
+        if (rejection.errors[0].code === 'file-too-large') {
+          return `File "${rejection.file.name}" is too large. Maximum file size is 1MB`;
+        }
+        return `File "${rejection.file.name}" was rejected: ${rejection.errors[0].message}`;
+      });
+      setError(errors.join('\n'));
+    },
   });
 
   return (
@@ -113,7 +127,7 @@ export default function PDFUploader() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded-lg"
+            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded-lg whitespace-pre-line"
           >
             {error}
           </motion.div>

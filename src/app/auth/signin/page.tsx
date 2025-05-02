@@ -18,9 +18,12 @@ export default function SignIn() {
         className="sm:mx-auto sm:w-full sm:max-w-md"
       >
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-          Welcome to AI PDF Support Agent
+          Welcome to RAG-ify
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+        <h4 className="text-center text-xl font-extrabold text-gray-900 dark:text-gray-400">
+          Your AI PDF Support Agent
+        </h4>
+        <p className="mt-8 text-center text-sm text-gray-600 dark:text-gray-400">
           Sign in to start chatting with your documents
         </p>
       </motion.div>
@@ -29,7 +32,7 @@ export default function SignIn() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="mt-8 sm:mx-auto sm:w-full sm:max-w-md"
+        className="mt-2 sm:mx-auto sm:w-full sm:max-w-md"
       >
         <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow-xl sm:rounded-lg sm:px-10">
           <div className="space-y-6">
