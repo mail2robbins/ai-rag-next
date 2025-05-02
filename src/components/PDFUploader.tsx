@@ -15,6 +15,7 @@ export default function PDFUploader() {
   const [success, setSuccess] = useState<string | null>(null);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -76,6 +77,7 @@ export default function PDFUploader() {
 
   const handleDelete = async (documentId: string) => {
     setShowDeleteConfirm(null);
+    setDeletingId(documentId);
     try {
       const response = await fetch(`/api/documents/${documentId}`, {
         method: "DELETE",
@@ -89,6 +91,8 @@ export default function PDFUploader() {
       setSuccess("Document deleted successfully");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete document");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -168,35 +172,42 @@ export default function PDFUploader() {
             {documents.map((doc) => (
               <li key={doc.id} className="py-3 flex items-center justify-between">
                 <span className="text-sm text-gray-600">{doc.name}</span>
-                <button
-                  onClick={() => setShowDeleteConfirm(doc.id)}
-                  className="text-gray-400 hover:text-red-600 p-1.5 rounded-full hover:bg-red-50 transition-colors relative group"
-                  aria-label="Delete document"
-                >
-                  <span className="sr-only">Delete document</span>
-                  {/* Tooltip */}
-                  <div className="absolute bottom-full mb-2 hidden group-hover:block">
-                    <div className="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
-                      Delete document
-                      {/* Tooltip arrow */}
-                      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900"></div>
-                    </div>
+                {deletingId === doc.id ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
+                    <span className="text-sm text-gray-500">Deleting...</span>
                   </div>
-                  {/* Trash icon */}
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                ) : (
+                  <button
+                    onClick={() => setShowDeleteConfirm(doc.id)}
+                    className="text-gray-400 hover:text-red-600 p-1.5 rounded-full hover:bg-red-50 transition-colors relative group"
+                    aria-label="Delete document"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                    />
-                  </svg>
-                </button>
+                    <span className="sr-only">Delete document</span>
+                    {/* Tooltip */}
+                    <div className="absolute bottom-full mb-2 hidden group-hover:block">
+                      <div className="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+                        Delete document
+                        {/* Tooltip arrow */}
+                        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900"></div>
+                      </div>
+                    </div>
+                    {/* Trash icon */}
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                  </button>
+                )}
               </li>
             ))}
           </ul>
