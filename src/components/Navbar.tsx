@@ -1,18 +1,18 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
-import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+// import { useTheme } from "next-themes";
+// import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 export default function Navbar() {
     const { data: session } = useSession();
-    const { theme, setTheme } = useTheme();
-    const [mounted, setMounted] = useState(false);
+    // const { theme, setTheme } = useTheme();
+    // const [mounted, setMounted] = useState(false);
 
-    useEffect(() => {
-        setMounted(true);
-    }, []);
+    // useEffect(() => {
+    //     setMounted(true);
+    // }, []);
 
     return (
         <nav className="bg-white dark:bg-gray-800 shadow-sm">

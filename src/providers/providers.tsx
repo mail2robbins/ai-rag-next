@@ -2,8 +2,14 @@
 
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "./theme-provider";
+import { Session } from "next-auth";
 
-export function Providers({ children, session }: { children: React.ReactNode; session: any }) {
+interface ProvidersProps {
+  children: React.ReactNode;
+  session: Session | null;
+}
+
+export function Providers({ children, session }: ProvidersProps) {
   return (
     <SessionProvider session={session}>
       <ThemeProvider>

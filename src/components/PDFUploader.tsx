@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useTheme } from "next-themes";
+// import { useTheme } from "next-themes";
 
 interface Document {
   id: string;
@@ -19,7 +19,7 @@ export default function PDFUploader() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const { data: session } = useSession();
-  const { theme, setTheme } = useTheme();
+  // const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     if (session?.user?.email) {

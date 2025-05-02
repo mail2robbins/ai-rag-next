@@ -29,13 +29,6 @@ export async function GET() {
       );
     }
 
-    // Check if any documents exist
-    const documentCount = await prisma.document.count({
-      where: {
-        userId: user.id,
-      },
-    });
-
 
     const documents = await prisma.document.findMany({
       where: {

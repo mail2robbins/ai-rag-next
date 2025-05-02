@@ -1,13 +1,13 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { useTheme } from "next-themes";
+// import { useRouter } from "next/navigation";
+// import { useTheme } from "next-themes";
 
 export default function SignIn() {
-  const router = useRouter();
-  const { theme } = useTheme();
+  // const router = useRouter();
+  // const { theme } = useTheme();
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
