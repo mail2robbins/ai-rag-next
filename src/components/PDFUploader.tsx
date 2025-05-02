@@ -137,7 +137,7 @@ export default function PDFUploader() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-600 dark:text-green-400 px-4 py-3 rounded-lg"
+            className="bg-green-50 dark:bg-green-900/20 border border-purple-200 dark:border-green-800 text-green-600 dark:text-green-400 px-4 py-3 rounded-lg"
           >
             {success}
           </motion.div>
@@ -214,7 +214,7 @@ export default function PDFUploader() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-white dark:bg-gray-700 rounded-xl shadow-sm p-6 bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800"
+        className="bg-white dark:bg-gray-700 rounded-xl shadow-sm p-6 bg-gradient-to-br from-purple-100 via-teal-100 to-indigo-100 dark:bg-gradient-to-br dark:from-gray-800 dark:via-gray-700 dark:to-gray-800"
       >
         <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Uploaded Documents</h3>
         {documents.length === 0 ? (

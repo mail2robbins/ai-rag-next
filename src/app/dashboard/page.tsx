@@ -34,7 +34,7 @@ export default function Dashboard() {
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
             Upload Documents
           </h2>
-          <div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-6 bg-gradient-to-b from-gray-800 via-gray-700 to-gray-800">
+          <div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-6 bg-gradient-to-b from-purple-100 via-teal-100 to-indigo-100 dark:bg-gradient-to-b dark:from-gray-800 dark:via-gray-700 dark:to-gray-800">
             <PDFUploader />
           </div>
         </div>
@@ -43,7 +43,7 @@ export default function Dashboard() {
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
             Chat with Documents
           </h2>
-          <div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-6">
+          <div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-6 bg-gradient-to-br from-blue-100 via-teal-100 to-indigo-100 dark:bg-gradient-to-br dark:from-gray-800 dark:via-gray-700 dark:to-gray-800">
             <ChatInterface />
           </div>
         </div>

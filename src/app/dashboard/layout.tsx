@@ -22,7 +22,7 @@ export default function DashboardLayout({
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center bg-gradient-to-b from-gray-800 via-gray-700 to-gray-800">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center bg-gradient-to-b from-purple-100 via-teal-100 to-indigo-100 dark:bg-gradient-to-b dark:from-gray-800 dark:via-gray-700 dark:to-gray-800">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -41,7 +41,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 bg-gradient-to-b from-gray-800 via-gray-700 to-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 bg-gradient-to-br from-blue-100 via-teal-100 to-indigo-100 dark:bg-gradient-to-br dark:from-gray-800 dark:via-gray-700 dark:to-gray-800">
       <Navbar />
       <motion.main
         initial={{ opacity: 0, y: 20 }}

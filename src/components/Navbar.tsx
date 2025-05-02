@@ -15,7 +15,7 @@ export default function Navbar() {
     // }, []);
 
     return (
-        <nav className="bg-white dark:bg-gray-800 shadow-lg bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800">
+        <nav className="bg-white dark:bg-gray-800 shadow-lg bg-gradient-to-r from-green-100 via-teal-100 to-indigo-100 dark:bg-gradient-to-r dark:from-gray-800 dark:via-gray-700 dark:to-gray-800">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16">
                     <div className="flex items-center">
