@@ -8,8 +8,15 @@ import { getServerSession } from "next-auth";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AI PDF Support Agent",
+  title: "RAG-ify: AI PDF Support Agent",
   description: "Upload and chat with your PDF documents using AI",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
+  manifest: "/manifest.json",
+  themeColor: "#4F46E5",
 };
 
 export default async function RootLayout({
