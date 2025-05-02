@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { QdrantVectorStore } from "@langchain/community/vectorstores/qdrant";
 import { OpenAIEmbeddings } from "@langchain/openai";
-
-const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
   try {
@@ -85,16 +83,37 @@ export async function POST(request: Request) {
         ...doc,
         metadata: {
           ...doc.metadata,
-          documentId: document.id
+          documentId: document.id,
+          source: "pdf",
+          userId: user.id
         }
       }));
 
-      // Store vectors in Qdrant with document ID in metadata
-      await QdrantVectorStore.fromDocuments(docsWithMetadata, embeddings, {
+      // Store vectors in Qdrant and get point IDs
+      const vectorStore = await QdrantVectorStore.fromDocuments(docsWithMetadata, embeddings, {
         url: process.env.QDRANT_ENDPOINT,
         apiKey: process.env.QDRANT_API_KEY,
         collectionName: session.user.email,
       });
+
+      // Get the point IDs from Qdrant
+      const points = await vectorStore.client.scroll(session.user.email, {
+        limit: splitDocs.length,
+        with_payload: true,
+        with_vector: false,
+      });
+
+      // Store point IDs in the database
+      if (points.points && points.points.length > 0) {
+        await prisma.DocumentVector.createMany({
+          data: points.points.map(point => ({
+            pointId: point.id,
+            documentId: document.id,
+          })),
+          skipDuplicates: true,
+        });
+        console.log("Stored point IDs in database:", points.points.length);
+      }
 
       return NextResponse.json({ success: true });
     } catch (error: unknown) {

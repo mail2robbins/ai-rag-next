@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { QdrantVectorStore } from "@langchain/community/vectorstores/qdrant";
-import { OpenAIEmbeddings } from "@langchain/openai";
+import { QdrantClient } from "@qdrant/js-client-rest";
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -37,6 +36,9 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
         id: id,
         userId: user.id,
       },
+      include: {
+        vectors: true
+      }
     });
 
     if (!document) {
@@ -49,41 +51,51 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
 
     console.log("Deleting document:", document.id);
     
-    // Initialize embeddings and vector store
-    const embeddings = new OpenAIEmbeddings({
-      openAIApiKey: process.env.OPENAI_API_KEY,
-      maxRetries: 3,
-      maxConcurrency: 5,
-    });
-
     // Delete from Qdrant first
     try {
-      const vectorStore = await QdrantVectorStore.fromExistingCollection(embeddings, {
+      if (!process.env.QDRANT_ENDPOINT || !process.env.QDRANT_API_KEY) {
+        throw new Error("Qdrant configuration is missing");
+      }
+
+      console.log("Qdrant endpoint:", process.env.QDRANT_ENDPOINT);
+      
+      const qdrant = new QdrantClient({
         url: process.env.QDRANT_ENDPOINT,
         apiKey: process.env.QDRANT_API_KEY,
-        collectionName: session.user.email,
+        timeout: 10000, // 10 seconds timeout
       });
 
-      // Delete all vectors associated with this document
-      // We'll use the document content as a filter to find the vectors
-      await vectorStore.delete({
-        filter: {
-          must: [
-            {
-              key: "metadata.documentId",
-              match: {
-                value: id
-              }
-            }
-          ]
+      const collectionName = session.user.email;
+      console.log("Deleting vectors from Qdrant collection:", collectionName);
+
+      // Delete points one by one using their IDs
+      if (document.vectors && document.vectors.length > 0) {
+        console.log(`Found ${document.vectors.length} vectors to delete`);
+        for (const vector of document.vectors) {
+          try {
+            await qdrant.delete(collectionName, {
+              points: [vector.pointId]
+            });
+            console.log(`Deleted point ${vector.pointId}`);
+          } catch (error) {
+            console.error(`Error deleting point ${vector.pointId}:`, error);
+          }
         }
-      });
+      }
+
     } catch (error) {
-      console.error("Error deleting vectors from Qdrant:", error);
+      console.error("Error deleting from Qdrant:", error);
+      if (error instanceof Error) {
+        console.error("Error details:", {
+          message: error.message,
+          stack: error.stack,
+          name: error.name
+        });
+      }
       // Continue with document deletion even if Qdrant deletion fails
     }
 
-    // Delete the document from database
+    // Delete the document from database (this will cascade delete the vectors)
     await prisma.document.delete({
       where: {
         id: id,
