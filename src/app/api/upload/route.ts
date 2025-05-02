@@ -105,9 +105,9 @@ export async function POST(request: Request) {
 
       // Store point IDs in the database
       if (points.points && points.points.length > 0) {
-        await prisma.DocumentVector.createMany({
+        await prisma.documentVector.createMany({
           data: points.points.map(point => ({
-            pointId: point.id,
+            pointId: String(point.id),
             documentId: document.id,
           })),
           skipDuplicates: true,
